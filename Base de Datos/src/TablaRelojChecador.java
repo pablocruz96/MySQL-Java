@@ -7,6 +7,7 @@ import java.sql.SQLException;       //Biblioteca de Excepcion de la BD
 import java.sql.Statement;          //Biblioteca para Declarar la BD
 import java.util.logging.Level;     //Biblioteca que nivela registros
 import java.util.logging.Logger;    //Biblioteca para anotar cronologia
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;//Biblioteca para modelar tabla
 
 public class TablaRelojChecador {
@@ -39,8 +40,9 @@ public class TablaRelojChecador {
     //Nombre de los campos de la tabla
     private String idempl, fecha, hora, nombre, IO;
     
-    //Clase constructora que trae dos String y la ExceptionSQL por algun error
-    public TablaRelojChecador(String date, String name) throws SQLException{
+    //Clase constructora que trae tres String y la ExceptionSQL por algun error
+    public TablaRelojChecador(String date1,String date2, String name){
+        
         try {
             
             //Clase del conductor de la BD
@@ -53,8 +55,12 @@ public class TablaRelojChecador {
             stm= con.createStatement();
             
             //Creando una respuesta de la BD
-            res= stm.executeQuery("SELECT * FROM empleado WHERE fecha='" +
-                                   date + "' AND nombre='"+ name + "';");
+            res= stm.executeQuery("SELECT * FROM empleado WHERE "
+                    + "nombre = '"+name+"' AND "
+                    + "fecha BETWEEN '"+date1+"' AND '"+date2+"';");
+            System.out.println(("SELECT * FROM empleado WHERE "
+                    + "nombre = '"+name+"' AND "
+                    + "fecha BETWEEN '"+date1+"' AND '"+date2+"';"));
             
             //Buscando los datos hasta llegar al ultimo dato a buscar
             while(res.next()){
@@ -73,6 +79,9 @@ public class TablaRelojChecador {
         }catch (ClassNotFoundException ex){//Atrapar algun Error de la Coneccion
            Logger.getLogger
            (TablaRelojChecador.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (SQLException ex){
+            Logger.getLogger
+            (TablaRelojChecador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
@@ -84,6 +93,6 @@ public class TablaRelojChecador {
  *                                                                         *
  * Integrantes de Equipo                                                   *
  * Ramos Zuñiga Amado                                                      *
- * Olvera Rivera Maria Jose                                                *
+ * Olvera Rivera Maria Josefina                                              *
  * Cruz Meza Pablo Antonio                                                 *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

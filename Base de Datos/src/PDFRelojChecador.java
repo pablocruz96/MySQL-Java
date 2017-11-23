@@ -21,8 +21,8 @@ import javax.swing.JTable;              //Tablas a Crear
 public class PDFRelojChecador {
     Document doc;//Componete de un Documento a Crear
     
-    //Clase Construtora que trae una tabla y dos String con dos Exepciones
-    public PDFRelojChecador(JTable tabla, String name, String day)
+    //Clase Construtora que trae una tabla y tres String con dos Exepciones
+    public PDFRelojChecador(JTable tabla, String name, String day1, String day2)
         
         //Exepciones para evitar error al crear archivo y documento    
         throws FileNotFoundException, DocumentException{
@@ -41,7 +41,7 @@ public class PDFRelojChecador {
             
             //Creando un parrafo con formato de letra para el PDF
             Paragraph titulo= new Paragraph("Reloj Checador\n",
-            FontFactory.getFont("Times New Roman",30,//Fuente y tamaño de letra
+            FontFactory.getFont("Arial Black",30,//Fuente y tamaño de letra
                     Font.BOLD,BaseColor.BLUE));      //Estilo y color de letra
             titulo.setAlignment(Element.ALIGN_CENTER);//Centrando parrafo
             
@@ -76,8 +76,8 @@ public class PDFRelojChecador {
             
             doc.add(foto);      //Agregando foto al PDF
             doc.add(titulo);    //Agregando parrafo al PDF
-            doc.add(new Paragraph("Nombre: "+name));//Agregando parrafo al PDF
-            doc.add(new Paragraph("Fecha: "+day));//Agregando parrafo al PDF
+            doc.add(new Paragraph("Nombre: "+name));
+            doc.add(new Paragraph("Fecha: "+day1+" "+day2));
             doc.add(new Paragraph(" "));//Agregando parrafo vacio al PDF
             doc.add(pdftabla);//Agregando tabla al PDF
             
@@ -100,6 +100,6 @@ public class PDFRelojChecador {
  *                                                                         *
  * Integrantes de Equipo                                                   *
  * Ramos Zuñiga Amado                                                      *
- * Olvera Rivera Maria Jose                                                *
+ * Olvera Rivera Maria Josefina                                                *
  * Cruz Meza Pablo Antonio                                                 *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
