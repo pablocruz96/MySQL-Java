@@ -1,92 +1,95 @@
-//Creando un PDF desde JAVA
-
-//Importando Bibliotecas
-import com.itextpdf.text.BaseColor; //Rellenar Celda de una tabla del Documento
-import com.itextpdf.text.Document;  //Generar documento
-import com.itextpdf.text.DocumentException;//Excepcion del Documento
-import com.itextpdf.text.Element;//Elementos de ocupa un componete del Documento
-import com.itextpdf.text.Font;  //Formato de Letra 
-import com.itextpdf.text.FontFactory;//Declarar Formato de Letras del Documento
-import com.itextpdf.text.Image;     //Imagen o Icono dentro de un Documento
-import com.itextpdf.text.Paragraph; //Parrafos de un PDF
-import com.itextpdf.text.Phrase;   //Frase para una celda de una tabla en el PDF
-import com.itextpdf.text.pdf.PdfPCell;  //Celda de tabla en el PDF
-import com.itextpdf.text.pdf.PdfPTable; //Tabla en un PDF
-import com.itextpdf.text.pdf.PdfWriter; //Escribir en el PDF
-import java.io.FileNotFoundException;   //Excepcion de Archivo a Crear
-import java.io.FileOutputStream;        //Archivar el Archivo a Crear
-import javax.swing.JOptionPane;         //Ventanas de JAVA a Mostrar
-import javax.swing.JTable;              //Tablas a Crear
+import com.itextpdf.text.BaseColor; 
+import com.itextpdf.text.Document;  
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;   
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Image;    
+import com.itextpdf.text.Paragraph; 
+import com.itextpdf.text.Phrase;   
+import com.itextpdf.text.pdf.PdfPCell;  
+import com.itextpdf.text.pdf.PdfPTable; 
+import com.itextpdf.text.pdf.PdfWriter; 
+import java.io.File;
+import java.io.FileNotFoundException;   
+import java.io.FileOutputStream;        
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;         
+import javax.swing.JTable;             
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class PDFRelojChecador {
-    Document doc;//Componete de un Documento a Crear
+    private Document Doc;
+    private JFileChooser Ventana;
+    private FileNameExtensionFilter Filtro;
+    private File Archivo;
+    private String Ruta;
     
     //Clase Construtora que trae una tabla y tres String con dos Exepciones
-    public PDFRelojChecador(JTable tabla, String name, String day1, String day2)
-        
-        //Exepciones para evitar error al crear archivo y documento    
+    public PDFRelojChecador(JTable tabla, String name, String day1, String day2)       
+        //Exepciones para evitar error al crear archivo y documento, damos la
+        //ubicación del fichero
         throws FileNotFoundException, DocumentException{
+        Ventana= new JFileChooser();
+        Filtro= new FileNameExtensionFilter("Archivos PDF","pdf");
+        Ventana.setFileFilter(Filtro);
+        
+        if(Ventana.showSaveDialog(null)==JFileChooser.APPROVE_OPTION){
+            Archivo= Ventana.getSelectedFile();
+            Ruta= Archivo.getPath();
+            Ruta= Ruta + ".pdf";
+        }
+        
+        Archivo= new File(Ruta);
         
         try{
-            doc = new Document();//Creando Documento
+            Doc = new Document();
             
-            //Creando Escritura del Archivo de tipo PDF
-            PdfWriter.getInstance(doc, new FileOutputStream("Checador.pdf"));
-            
-            doc.open();//Abriendo el documento
-            
-            //Creando una imagen para el PDF exportada de la clase
+            //Creando Escritura del Archivo de tipo PDF, se importa una imagen 
+            //que encabezara el pdf, y estqara alineado al centro
+            PdfWriter.getInstance(Doc, new FileOutputStream(Ruta));
+            Doc.open();
             Image foto = Image.getInstance(getClass().getResource("reloj.png"));
-            foto.setAlignment(Element.ALIGN_CENTER);//Centrando imagen
+            foto.setAlignment(Element.ALIGN_CENTER);
             
-            //Creando un parrafo con formato de letra para el PDF
+            /*Creando un parrafo con formato de letra para el PDF*/
             Paragraph titulo= new Paragraph("Reloj Checador\n",
-            FontFactory.getFont("Arial Black",30,//Fuente y tamaño de letra
-                    Font.BOLD,BaseColor.BLUE));      //Estilo y color de letra
-            titulo.setAlignment(Element.ALIGN_CENTER);//Centrando parrafo
+            FontFactory.getFont("Arial Black",30, Font.BOLD,BaseColor.BLUE));      
+            titulo.setAlignment(Element.ALIGN_CENTER);
             
-            //Creando una tabla para el PDF
+            //Creando una tabla para el PDF y declaración de la columna
             PdfPTable pdftabla = new PdfPTable(tabla.getColumnCount());
-            PdfPCell columna;//Declarando celda para las columnas de tabla
+            PdfPCell columna;
             
-            //Creando las celdas de las columnas
-            for(int i=0; i < tabla.getColumnCount(); i++){
-                
-                //Creando celda para la tabla
+            /*Creando las celdas de las columnas, con el texto centrado y relle-
+            nado de color */
+            for(int i=0; i < tabla.getColumnCount(); i++){  
                 columna= new PdfPCell(new Phrase(tabla.getColumnName(i)));
-                
-                //Centrando texto de la Celda
-                columna.setHorizontalAlignment(Element.ALIGN_CENTER);
-                
-                //Rellenado celda de un color
+                columna.setHorizontalAlignment(Element.ALIGN_CENTER); 
                 columna.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                pdftabla.addCell(columna);//Agregando celda a la tabla
+                pdftabla.addCell(columna);
             }
             
             pdftabla.setHeaderRows(1);//Encabezado de las filas
             
-            //Creando Filas para la tabla
+            /*Creando Filas para la tabla, y se agrega las celdas y demás elementos al documento pdf*/
             for(int i=0; i<tabla.getRowCount();i++){
                 for(int j=0; j < tabla.getColumnCount(); j++){
-                    
-                    //Agregando celda a la Tabla
                     pdftabla.addCell(tabla.getValueAt(i, j).toString());
                 }
             }
             
-            doc.add(foto);      //Agregando foto al PDF
-            doc.add(titulo);    //Agregando parrafo al PDF
-            doc.add(new Paragraph("Nombre: "+name));
-            doc.add(new Paragraph("Fecha: "+day1+" "+day2));
-            doc.add(new Paragraph(" "));//Agregando parrafo vacio al PDF
-            doc.add(pdftabla);//Agregando tabla al PDF
+            Doc.add(foto);      
+            Doc.add(titulo);  
+            Doc.add(new Paragraph("Nombre: "+name));
+            Doc.add(new Paragraph("Fecha: "+day1+" "+day2));
+            Doc.add(new Paragraph(" "));
+            Doc.add(pdftabla);
+            Doc.close();
             
-            doc.close();//Cerrar Documento
-            
-            //Mensage de Creacion del PDF
             JOptionPane.showMessageDialog(null,"Se ha Creado un PDF");
         
-        }catch(Exception e){//Excepcion con mensage por cualquier error ocurrido
+        }catch(Exception e){
             JOptionPane.showMessageDialog(null,
                     "Checar si el PDF esta Abierto u otro Error");
         }
@@ -100,6 +103,6 @@ public class PDFRelojChecador {
  *                                                                         *
  * Integrantes de Equipo                                                   *
  * Ramos Zuñiga Amado                                                      *
- * Olvera Rivera Maria Josefina                                                *
+ * Olvera Rivera Maria Josefina                                            *
  * Cruz Meza Pablo Antonio                                                 *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

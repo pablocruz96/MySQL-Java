@@ -1,5 +1,3 @@
-//Importar todos los datos para la base de datos de un archivo de texto
-
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.io.BufferedReader;
@@ -17,60 +15,64 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-public class DatosRelojChecador extends JFrame{//Clase con una Venta
+public class DatosRelojChecador extends JFrame{
     
-    //Etiqueta ya declarada
-    private JLabel carga= new JLabel("Cargando datos...");
+    private JLabel Carga= new JLabel("Cargando datos...");   
+    private Connection con;         
+    private PreparedStatement Ps;   
+    private File Archivo;       
+    private FileReader Fr;      
+    private BufferedReader Br;      
+    private String Url="jdbc:mysql://localhost:3306/relojchecador"; 
+    private String User="root";       
+    private String Pass="1234";  
     
-    private Connection con;         //Conexion de la BD
-    private PreparedStatement ps;   //Consulta directamente Preparada
-    
-    private File archivo;       //Componente para Extraer Archivo
-    private FileReader fr;      //Componente para Leer el Archivo
-    private BufferedReader br;  //Componente para 
-    
-    //Nombre de la url para la conecion de la BD
-    private String url="jdbc:mysql://localhost:3306/relojchecador";
-    
-    private String user="root";         //Usuario de la BD
-    private String pass="96Pablobros";  //Contraseña del usuario
-    
-    public DatosRelojChecador(){
-        super("Insertando Datos");//Titulo de la ventana
-        setLayout(new FlowLayout());//Borde de Ventana de tipo FlowLayout
+    public DatosRelojChecador(String Ruta){
+        super("Insertando Datos");
+        setLayout(new FlowLayout());
+        Carga.setFont(new Font("Times New Roman", Font.BOLD,32));
+        add(Carga);
+        setSize(400,100);
+        setVisible(true);
         
-        //Declaran formato a la Etiqueta
-        carga.setFont(new Font("Times New Roman", Font.BOLD,32));
-        add(carga);//Agregando etiqueta a la ventana 
-        setSize(400,100);//Tamaño de la Ventana
-        setVisible(true);//Ventana Visible
-        
-        try {
+        try {            
+            //Lee el archivo especificado por la ruta y lo carga
+            Archivo= new File(Ruta);       
+            Fr= new FileReader(Archivo);
+            Br= new BufferedReader(Fr);
             
-            //Cargando el archivo
-            archivo= new File("C:\\TXT\\relojchecador_empleado.txt");
-            
-            
-            fr= new FileReader(archivo);//Leyendo el archivo
-            br= new BufferedReader(fr);//Leyendo la escritura del archivo
-            
-            //Clase del conductor de la BD
             Class.forName("com.mysql.jdbc.Driver");
             
-            //Creando coneccion de la BD
-            con= DriverManager.getConnection(url,user,pass);
+            /*Creando conexion de la BD y creamos la la tabla llamada Empleado
+            que tambien se imprimera en la consola de java*/
+            con= DriverManager.getConnection(Url,User,Pass);            
+            Ps= con.prepareStatement("CREATE TABLE Empleado ("
+                    + "idempleado int, fecha date, hora varchar(10),"
+                    + "nombre varchar(30), EntSal varchar(2))");
+            Ps.executeUpdate();
+            
+            System.out.println("CREATE TABLE Empleado ("
+                    + "idempleado int, fecha date, hora varchar(10),"
+                    + "nombre varchar(30), EntSal varchar(2))");
             
             String arg;//Nombre de la linea de consulta
-            
-            //Buscando Consultas
-            while((arg=br.readLine())!=null){
-                System.out.println(arg);
-                //Creando la Preparacion de la consulta de Insercion
-                ps= con.prepareStatement(arg);
-                ps.executeUpdate();//Ejecuta consulta
+            String datos[];
+            /*lee los datos que hay en el archivo que se selecciono anteriormente
+            e inserta los datos de este*/
+            while((arg=Br.readLine())!=null){
+                datos= arg.split("\t");
+                Ps= con.prepareStatement(
+                    "INSERT INTO Empleado(idempleado,fecha,hora,nombre,EntSal) "
+                  + "VALUES (" + datos[0] + ", '"+datos[1] + "', '" + datos[2]
+                  + "', '" + datos[3]+"' ,'" + datos[4] + "');");
+                Ps.executeUpdate();
+                System.out.println(
+                  "INSERT INTO Empleado(idempleado,fecha,hora,nombre,EntSal) "
+                  + "VALUES (" + datos[0] + ", '"+datos[1] + "', '" + datos[2]
+                  + "', '" + datos[3]+"' ,'" + datos[4] + "');");
             }
-            
-        }catch(FileNotFoundException ex) {//Exepcion por si no existe el Archivo
+        //Exepcion por si no existe el Archivo
+        }catch(FileNotFoundException ex) {
             Logger.getLogger(DatosRelojChecador.class.getName()).
             log(Level.SEVERE, null, ex);
         }catch (IOException ex){
@@ -84,10 +86,10 @@ public class DatosRelojChecador extends JFrame{//Clase con una Venta
             log(Level.SEVERE, null, ex);
         }
         
-        setVisible(false);//Ventana no visible
-        
-        //Mensage de datos ya cargados
+        setVisible(false);
         JOptionPane.showMessageDialog(null, "Datos Cargados");
+        
+        RelojChecador reloj= new RelojChecador();
     }
 }
 
@@ -99,6 +101,6 @@ public class DatosRelojChecador extends JFrame{//Clase con una Venta
  *                                                                         *
  * Integrantes de Equipo                                                   *
  * Ramos Zuñiga Amado                                                      *
- * Olvera Rivera Maria Jose                                                *
+ * Olvera Rivera Maria Josefina                                                *
  * Cruz Meza Pablo Antonio                                                 *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

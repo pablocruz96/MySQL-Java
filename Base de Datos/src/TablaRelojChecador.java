@@ -1,76 +1,59 @@
-//Cambiar el Modelo de un Jtable con una coneccion de una Base de Datos
-
-import java.sql.Connection;         //Biblioteca para realizar la coneccion
-import java.sql.DriverManager;      //Biblioteca para traer conector
-import java.sql.ResultSet;          //Biblioteca para respuesta de la BD
-import java.sql.SQLException;       //Biblioteca de Excepcion de la BD
-import java.sql.Statement;          //Biblioteca para Declarar la BD
-import java.util.logging.Level;     //Biblioteca que nivela registros
-import java.util.logging.Logger;    //Biblioteca para anotar cronologia
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;//Biblioteca para modelar tabla
+import java.sql.Connection;         
+import java.sql.DriverManager;      
+import java.sql.ResultSet;          
+import java.sql.SQLException;       
+import java.sql.Statement;          
+import java.util.logging.Level;    
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 
 public class TablaRelojChecador {
     
-    //Nombre de las columnas de la tabla
-    private String colum[]=
+    private String Colum[]=
             {"ID_Trabajador", "Nombre", "Fecha", "Hora", "EntradaSalida"};
-    
-    private String filas[][];       //Filas de la tabla
-    private Connection con;         //Coneccion de la BD
-    private ResultSet res;          //Respuesta de la BD
-    private Statement stm;          //Declaracion de la BD
-    
-    //Nombre de la url para la conecion de la BD
-    private String url="jdbc:mysql://localhost:3306/relojchecador";
-    
-    private String user="root";         //Usuario de la BD
-    private String pass="96Pablobros";  //Contraseña del usuario
-    
-    //Modelo de la Tabla a Mostrar
-    DefaultTableModel dtm= new DefaultTableModel(filas,colum){
+    private String Filas[][];       
+    private Connection con;         
+    private ResultSet Res;        
+    private Statement Stm;          
+    private String Url="jdbc:mysql://localhost:3306/relojchecador";   
+    private String User="root";         
+    private String Pass="96Pablobros";   
+    DefaultTableModel dtm= new DefaultTableModel(Filas,Colum){
         
-        //Haciendo la tabla no editable
         @Override
         public boolean isCellEditable (int row, int column){
             return false;
         }
     };
     
-    //Nombre de los campos de la tabla
     private String idempl, fecha, hora, nombre, IO;
     
     //Clase constructora que trae tres String y la ExceptionSQL por algun error
     public TablaRelojChecador(String date1,String date2, String name){
         
         try {
-            
-            //Clase del conductor de la BD
             Class.forName("com.mysql.jdbc.Driver");
+            con= DriverManager.getConnection(Url,User,Pass);
+            Stm= con.createStatement();
             
-            //Creando coneccion de la BD
-            con= DriverManager.getConnection(url,user,pass);
-            
-            //Creando la Declaracion de la BD
-            stm= con.createStatement();
-            
-            //Creando una respuesta de la BD
-            res= stm.executeQuery("SELECT * FROM empleado WHERE "
+            /*se crea la consulta en la base de datos donde se selecciona el
+            nombre y las fechas entre las cuales queremos obtener información*/
+            Res= Stm.executeQuery("SELECT * FROM empleado WHERE "
                     + "nombre = '"+name+"' AND "
                     + "fecha BETWEEN '"+date1+"' AND '"+date2+"';");
             System.out.println(("SELECT * FROM empleado WHERE "
                     + "nombre = '"+name+"' AND "
                     + "fecha BETWEEN '"+date1+"' AND '"+date2+"';"));
             
-            //Buscando los datos hasta llegar al ultimo dato a buscar
-            while(res.next()){
-                
-                //Nombrando los campos de la tabla dependiendo del dato
-                idempl = res.getString("idempleado");
-                fecha  = res.getString("fecha");
-                hora   = res.getString("hora");
-                nombre = res.getString("nombre");
-                IO     = res.getString("EntSal");
+            /*Buscando los datos hasta llegar al ultimo dato a buscar y obtiene
+            el dato que se esta buscandop*/
+            while(Res.next()){
+ 
+                idempl = Res.getString("idempleado");
+                fecha  = Res.getString("fecha");
+                hora   = Res.getString("hora");
+                nombre = Res.getString("nombre");
+                IO     = Res.getString("EntSal");
                 
                 //Creando y Agregando fila de datos a la tabla
                 String datos []={idempl,nombre,fecha,hora,IO};
