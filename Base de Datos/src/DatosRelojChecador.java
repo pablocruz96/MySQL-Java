@@ -25,7 +25,7 @@ public class DatosRelojChecador extends JFrame{
     private BufferedReader Br;      
     private String Url="jdbc:mysql://localhost:3306/relojchecador"; 
     private String User="root";       
-    private String Pass="1234";  
+    private String Pass="96Pablobros";  
     
     public DatosRelojChecador(String Ruta){
         super("Insertando Datos");
@@ -60,6 +60,12 @@ public class DatosRelojChecador extends JFrame{
             /*lee los datos que hay en el archivo que se selecciono anteriormente
             e inserta los datos de este*/
             while((arg=Br.readLine())!=null){
+                arg= arg.replaceAll("\t1\t1", "");
+                arg= arg.replaceAll("I\t0", "I");
+                arg= arg.replaceAll("O\t0", "O");
+                arg= arg.replaceAll(" 0", "\t0");
+                arg= arg.replaceAll(" 1", "\t1");
+                arg= arg.replaceAll(" 2", "\t2");
                 datos= arg.split("\t");
                 Ps= con.prepareStatement(
                     "INSERT INTO Empleado(idempleado,fecha,hora,nombre,EntSal) "

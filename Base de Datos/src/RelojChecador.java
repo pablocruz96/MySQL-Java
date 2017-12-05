@@ -68,6 +68,7 @@ public class RelojChecador {
         Secundario = new JPanel();
         ModeloT = new DefaultTableModel(DatosT, TitulosT);
         TablaT = new JTable(ModeloT);
+        TablaT.setRowSelectionAllowed(true);
         ScrollT = new JScrollPane(TablaT);
         ScrollT.setPreferredSize(new Dimension(450, 120));
         Secundario2.add(ScrollT);
@@ -172,6 +173,7 @@ public class RelojChecador {
         if ("".equals(NombreT.getText()) || "".equals(FechaT.getText())
                 || "".equals(FechaT2.getText())) {
             JOptionPane.showMessageDialog(null, "Hay un Campo Vacio");
+            TablaT.setModel(ModeloT);
         } else { 
             TablaRelojChecador rj = new TablaRelojChecador(FechaT.getText(),
                     FechaT2.getText(), NombreT.getText());

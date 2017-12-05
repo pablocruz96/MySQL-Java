@@ -41,7 +41,7 @@ public class BuscarArchivo extends JFrame{
                 Filtro= new  FileNameExtensionFilter("Archivos TXT", "txt");
                 Ventana.setFileFilter(Filtro);
                 
-                int i= Ventana.showOpenDialog(null);               
+                int i= Ventana.showOpenDialog(null);
                 if(i==JFileChooser.APPROVE_OPTION){
                     String ruta= Ventana.getSelectedFile().getPath();
                     Jtfexa.setText(ruta);
